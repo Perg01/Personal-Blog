@@ -7,6 +7,7 @@ const PORT = 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
@@ -65,9 +66,6 @@ function authentication(req, res, next) {
     }
 
 }
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 app.get('/admin', authentication, (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'admin.html'));

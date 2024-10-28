@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/admin.css">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to the Admin Dashboard</h1>
+    <p>Welcome, Here you can manage your articles.</p>
+
+    <main>
+        <section id="controls">
+            <a href="/new" class="button add-button">Add new Article</a>
+        </section>
+
+        <section id="articles-list">
+            <h2>Published Articles</h2>
+            <ul>
+                <li class="article-item">
+                    <span class="article-title">Example Article Title</span>
+                    <span class="article-date">2024-10-25</span>
+                    <!-- Might need to be changed later on -->
+                    <a href="/edit/article-id" class="button edit-button"></a> 
+                    <button class="button delete-button">Delete</button> 
+                </li>
+            </ul>
+        </section>
+    </main>
+</body>
+</html>
