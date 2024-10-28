@@ -2,18 +2,21 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 
+
 const app = express();
 const PORT = 3000;
+const articlesPath = path.join(__dirname, 'articles');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-
+// Route to create a new article
 app.post('/new', (req, res) => {
     const { title, content, date } = req.body;
 
@@ -31,20 +34,27 @@ app.post('/new', (req, res) => {
     const fileName = `${title.replace(/\s+/g, '_')}.json`;
     // Path of the file
     const filePath = path.join(articlesdir, fileName);
+    // Genrerate unique id
+    const id = `article_${Date.now()}`;
 
     // The content of the file
-    const articleData = { title, content, date };
+    const articleData = {
+        id,
+        title,
+        content,
+        date,
+    };
+
 
     // Convert object to JSON and save to folder
     fs.writeFile(filePath, JSON.stringify(articleData, null, 2), (err) => {
         if (err) {
-            console.error('Something went wrong saving the article: ', err);
             return res.status(500).send('Something went wrong saving the article.');
         }
-        res.send('Article saved successfully!');
+        res.redirect('/admin');
     });
 
-    console.log('Recieved request: ', req.body);
+
 });
 
 // Basic Authentication
@@ -66,6 +76,27 @@ function authentication(req, res, next) {
     }
 
 }
+
+// Displays articles on admin page
+app.get('/admin', (req, res) => {
+    fs.readdir(articlesPath, (err, files) => {
+        if (err) {
+            return res.status(500).send('Something went wrong, can\'t fetch articles');
+        }
+
+        const articles = [];
+
+        files.forEach(file => {
+            const filePath = path.join(articlesPath, file);
+            const fileData = fs.readFileSync(filePath, 'utf-8');
+            const article = JSON.parse(fileData);
+
+            articles.push(article);
+        });
+
+        res.render('admin.ejs', { articles });
+    });
+});
 
 app.get('/admin', authentication, (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'admin.html'));
