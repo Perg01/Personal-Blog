@@ -46,6 +46,33 @@ app.post('/new', (req, res) => {
     console.log('Recieved request: ', req.body);
 });
 
+// Basic Authentication
+function authentication(req, res, next) {
+    const authHeader = req.headers['authorization'];
+
+    if (!authHeader) {
+        res.setHeader('WWW-Authenticate', 'Basic');
+        return res.status(401).send('Authentication required');
+    }
+
+    const credentials = Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
+    const [username, password] = credentials;
+
+    if (username === 'admin' && password === 'admin') {
+        return next();
+    } else {
+        return res.status(403).send('Access denied');
+    }
+
+}
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get('/admin', authentication, (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'admin.html'));
+});
+
 app.get('/new', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'new.html'));
 });
