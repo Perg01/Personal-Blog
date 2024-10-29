@@ -16,46 +16,21 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-// Route to create a new article
-app.post('/new', (req, res) => {
-    const { title, content, date } = req.body;
-
-    if (!title || !content || !date) {
-        return res.status(400).send('All fields are required.');
-    }
-
-    // Create the directory if it doesn't exist
-    const articlesdir = path.join(__dirname, 'articles');
-    if (!fs.existsSync(articlesdir)) {
-        fs.mkdirSync(articlesdir);
-    }
-
-    // Name of the file
-    const fileName = `${title.replace(/\s+/g, '_')}.json`;
-    // Path of the file
-    const filePath = path.join(articlesdir, fileName);
-    // Genrerate unique id
+function createArticles({ title, content, date }) {
     const id = `article_${Date.now()}`;
+    const articleData = { id, title, content, date };
+    const filePath = path.join(articlesPath, `${id}.json`);
 
-    // The content of the file
-    const articleData = {
-        id,
-        title,
-        content,
-        date,
-    };
-
-
-    // Convert object to JSON and save to folder
-    fs.writeFile(filePath, JSON.stringify(articleData, null, 2), (err) => {
-        if (err) {
-            return res.status(500).send('Something went wrong saving the article.');
-        }
-        res.redirect('/admin');
+    return new Promise((resolve, reject) => {
+        fs.writeFile(filePath, JSON.stringify(articleData, null, 2), (err) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(articleData);
+            }
+        });
     });
-
-
-});
+}
 
 // Basic Authentication
 function authentication(req, res, next) {
@@ -74,28 +49,113 @@ function authentication(req, res, next) {
     } else {
         return res.status(403).send('Access denied');
     }
-
 }
+
+// Updates article
+function editArticle(id, updatedData) {
+    const filePath = path.join(articlesPath, `${id}.json`);
+
+    return new Promise((resolve, reject) => {
+
+        fs.readFile(filePath, 'utf-8', (readErr, data) => {
+
+            if (readErr) {
+                return reject(readErr);
+            }
+
+            const articleData = JSON.parse(data);
+            const articleToSave = { ...articleData, ...updatedData, id };
+
+            fs.writeFile(filePath, JSON.stringify(articleToSave, null, 2), (writeErr) => {
+                if (writeErr) {
+                    reject(writeErr);
+                } else {
+                    resolve(articleToSave);
+                }
+            });
+        });
+
+    });
+}
+
+// Retrieves article
+function getArticle(id) {
+    const filePath = path.join(articlesPath, `${id}.json`);
+
+    return new Promise((resolve, reject) => {
+        fs.readFile(filePath, 'utf-8', (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(JSON.parse(data));
+            }
+        });
+    });
+}
+
+// Gets all articles
+function getAllArticles() {
+    const articles = [];
+
+    fs.readdirSync(articlesPath).forEach(file => {
+        const filePath = path.join(articlesPath, file);
+        const fileData = fs.readFileSync(filePath, 'utf-8');
+        const article = JSON.parse(fileData);
+
+        articles.push(article);
+    });
+
+    return articles;
+}
+
+// Route to fetch article
+app.get('/edit/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const article = await getArticle(id);
+        res.render('edit.ejs', { article });
+    } catch (err) {
+        res.status(500).send('Something went wrong, can\'t fetch article');
+    }
+});
+
+// Route to update article
+app.post('/edit/:id', async (req, res) => {
+
+    const updatedData = {
+        id: req.body.id,
+        title: req.body.title,
+        content: req.body.content,
+        date: req.body.date
+    };
+    editArticle(req.params.id, updatedData)
+        .then(() => {
+            res.redirect('/admin');
+        })
+        .catch(err => {
+            res.status(500).send('Something went wrong, can\'t update article');
+        });
+});
+
+// Route to create a new article
+app.post('/new', async (req, res) => {
+    try {
+        const { title, content, date } = req.body;
+        await createArticles({ title, content, date });
+        res.redirect('/admin');
+    } catch (err) {
+        res.status(500).send('Something went wrong, can\'t create article');
+    }
+});
 
 // Displays articles on admin page
 app.get('/admin', (req, res) => {
-    fs.readdir(articlesPath, (err, files) => {
-        if (err) {
-            return res.status(500).send('Something went wrong, can\'t fetch articles');
-        }
-
-        const articles = [];
-
-        files.forEach(file => {
-            const filePath = path.join(articlesPath, file);
-            const fileData = fs.readFileSync(filePath, 'utf-8');
-            const article = JSON.parse(fileData);
-
-            articles.push(article);
-        });
-
+    try {
+        const articles = getAllArticles();
         res.render('admin.ejs', { articles });
-    });
+    } catch (err) {
+        res.status(500).send('Something went wrong, can\'t fetch all articles');
+    }
 });
 
 app.get('/admin', authentication, (req, res) => {

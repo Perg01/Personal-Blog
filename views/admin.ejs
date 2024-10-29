@@ -18,13 +18,15 @@
         <section id="articles-list">
             <h2>Published Articles</h2>
             <ul>
-                <li class="article-item">
-                    <span class="article-title">Example Article Title</span>
-                    <span class="article-date">2024-10-25</span>
-                    <!-- Might need to be changed later on -->
-                    <a href="/edit/article-id" class="button edit-button"></a> 
-                    <button class="button delete-button">Delete</button> 
-                </li>
+                <% articles.forEach(article => { %>
+
+                    <li class="article-item">
+                        <span class="article-title"><%= article.title %></span>
+                        <span class="article-date"><%= article.date %></span>
+                        <a href="/edit/<%= article.id %>" id="article-id" class="button edit-button">Edit</a> 
+                        <button class="button delete-button" onclick="deleteArticle('<% article.id %>')">Delete</button> 
+                    </li>
+                <% }); %>
             </ul>
         </section>
     </main>
