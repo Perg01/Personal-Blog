@@ -1,0 +1,30 @@
+.article-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.article-container h1 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.article-container p {
+    line-height: 1.6;
+}
+
+.article-container .content {
+    margin-top: 20px;
+}
+
+.article-container a {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.article-container a:hover {
+    text-decoration: underline;
+}
