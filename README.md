@@ -1,75 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project README</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 20px;
-        }
-        h1, h2, h3 {
-            color: #4A90E2;
-        }
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Personal Blog</h1>
-    <p>This is a simple personal blog application built with Node.js and Express.js. It allows users to create, edit, view, and delete articles. The blog is structured with a focus on ease of use and management.</p>
+# Personal Blog Project
 
-    <h2>Table of Contents</h2>
-    <ul>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#installation">Installation</a></li>
-        <li><a href="#usage">Usage</a></li>
-        <li><a href="#authentication">Authentication</a></li>
-        <li><a href="#contributing">Contributing</a></li>
-        <li><a href="#license">License</a></li>
-    </ul>
+## Overview
 
-    <h2 id="features">Features</h2>
-    <ul>
-        <li>Create new articles</li>
-        <li>Edit existing articles</li>
-        <li>View individual articles</li>
-        <li>Delete articles</li>
-        <li>Display all articles on the home page</li>
-        <li>Admin dashboard for managing articles</li>
-        <li>Basic authentication for the admin page</li>
-    </ul>
+This project is a simple personal blog built using Node.js and Express. It allows users to create, read, update, and delete articles. The blog includes an admin dashboard that requires authentication to manage articles.
 
-    <h2 id="installation">Installation</h2>
-    <pre><code>git clone <repository-url>
+## Features
 
-cd <project-directory>
-npm install
-</code></pre>
-<p>Make sure you have Node.js and npm installed on your machine.</p>
+- **Create Articles**: Add new articles with a title, content, and date.
+- **Read Articles**: View published articles on the home page.
+- **Update Articles**: Edit existing articles from the admin dashboard.
+- **Delete Articles**: Remove articles through the admin interface.
+- **Admin Dashboard**: A secured area for managing articles that requires basic authentication.
+- **Basic Authentication**: Access to the admin dashboard is restricted to users with the username and password set as `admin`.
 
-    <h2 id="usage">Usage</h2>
-    <pre><code>node index.js
-    </code></pre>
-    <p>The application will run on <strong>http://localhost:3000</strong>. You can access the home page and admin page from there.</p>
+## Requirements
 
-    <h2 id="authentication">Authentication</h2>
-    <p>The admin page requires basic authentication. Use the following credentials to log in:</p>
-    <ul>
-        <li><strong>Username:</strong> admin</li>
-        <li><strong>Password:</strong> admin</li>
-    </ul>
+- Node.js
+- Express
 
-    <h2 id="contributing">Contributing</h2>
-    <p>If you'd like to contribute to this project, feel free to fork the repository and submit a pull request. Any contributions are welcome!</p>
+## Installation
 
-    <h2 id="license">License</h2>
-    <p>This project is licensed under the MIT License. See the <a href="LICENSE">LICENSE</a> file for details.</p>
+1. Clone the repository:
 
-</body>
-</html>
+   ```bash
+   git clone <repository-url>
+   cd <repository-name>
+
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Create an article directory in the root of the project to store articles.
+
+4. Start the server:
+
+   ```bash
+   node app.js
+   ```
+
+5. Open Your Browser and navigate to http://localhost:3000
+
+## Authentication
+
+Basic Authentication is used for the admin dashboard.
+The username and password are set as `admin` and `admin` respectively.
+
+Username: admin
+Password: admin
+
+## API Endpoints
+
+- **GET /admin**: Displays the admin dashboard where you can manage and create articles.
+- **GET /home**: Returns a list of published articles.
+- **POST /new**: Create a new article.
+- **GET /article/:id**: Returns the details of a specific article.
+- **GET /edit/:id**: Loads the edit page for a specific article.
+- **POST /edit/:id**: Updates an existing article.
+- **POST /admin/delete/:id**: Deletes an article.
+
+https://roadmap.sh/projects/personal-blog
